@@ -50,3 +50,12 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+DefaultBuild
+_002_cgr
+_004_cgr
+pdf
+Density2G.si4project
+pt100.TSC
+pt100.xlsx
+Density2G.Administrator
