@@ -378,14 +378,14 @@ static void modify_mode_on_m_key()
 	}
 	else if(mode_comps[hum_comps.current_mode].dis_option==3)//lower range
 	{
-		if(num<10000)
+		//if(num<10000)
 		{
 			save_data_en=1;
 		}
 	}
 	else if(mode_comps[hum_comps.current_mode].dis_option==4)//up range
 	{
-		if((num>10000)&&(num<=30000))
+		//if((num>10000)&&(num<=30000))
 		{
 			save_data_en=1;
 		}
@@ -545,14 +545,14 @@ static void normal_mode_display(unsigned char opt)
                 if(opt==1)
                 {
                     #if(MD_DEVICE==MD_CONSICY)
-        	    		num=(num/10000.*193.798-189)*100;
+        	    		num=(num/10000.*(-285.7)+283.7)*100;
         	    		if(num<0)
         	    		{
         	    		    num=0;
         	    		}
-        	    		else if(num>10000)
+        	    		else if(num>3000)
         	    		{
-                            num=10000;
+                            num=3000;
         	    		}
                     #endif
 	    		}
