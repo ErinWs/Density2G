@@ -286,13 +286,13 @@ static void Deal_irc(void)
 	if(!ircComps.sw._bit.busy)
  	do
 	{
-		DI();
-		err=Check_irc_Com(ircMisc.recv_buf,ircMisc.rec_pos); 
+	    err=Check_irc_Com(ircMisc.recv_buf,ircMisc.rec_pos); 
 		if(err>0)
 		{
-			memcpy(ircMisc.recv_buf,ircMisc.recv_buf+err,ircMisc.rec_pos-=err);
+            DI();
+            memcpy(ircMisc.recv_buf,ircMisc.recv_buf+err,ircMisc.rec_pos-=err);
+			EI();
     	}
-		EI();
 	}
 	while (err>0);
 }

@@ -545,16 +545,8 @@ static void normal_mode_display(unsigned char opt)
                 if(opt==1)
                 {
                     #if(MD_DEVICE==MD_CONSICY)
-        	    		num=(num/10000.*(-285.7)+283.7)*100;
-        	    		if(num<0)
-        	    		{
-        	    		    num=0;
-        	    		}
-        	    		else if(num>3000)
-        	    		{
-                            num=3000;
-        	    		}
-                    #endif
+        	    		num=sensor_comps.current_consicy;
+        	        #endif
 	    		}
 	    		
 	    		hum_comps.dig0_0=num%10;
@@ -576,10 +568,15 @@ static void normal_mode_display(unsigned char opt)
 	    				hide_zero(2);//reserved 2 digits 
 	    				hum_comps.dot0_pos=1;// 0.0  // kg/m^3 0.0
                         DIS_S2_KG_M_3; 
-                      #elif(MD_DEVICE==MD_CONSICY)
-                        hide_zero(3);//reserved 2 digits 
-	    				hum_comps.dot0_pos=2;// 0.00  // %
-                        DIS_S3_PPM;
+                        
+                      #elif((MD_DEVICE==MD_CONSICY) &&(MD_CONSICY_TYPE==MD_MUD))
+                          hum_comps.dot0_pos=1;// 0.0  // %
+                          hide_zero(hum_comps.dot0_pos+1);//reserved 2 digits 
+    	    			  DIS_S3_PPM;
+                     #elif ((MD_DEVICE==MD_CONSICY) &&(MD_CONSICY_TYPE==MD_ALCOHOL||MD_CONSICY_TYPE==MD_BOMEIDU))
+                          hum_comps.dot0_pos=2;// 0.0  // %
+                          hide_zero(hum_comps.dot0_pos+1);//reserved 2 digits 
+    	    			  HID_S1_S2_S3;
 	    			  #endif
 	    			  display_line0_data();
 	    			    break;	
@@ -665,7 +662,7 @@ static void pwd_mode_display(unsigned char opt)
 	if(hum_comps.dis_oper_mark&MD_OPER_CUR_MARK)
 	{
 		hum_comps.cursor_count++;
-		if(hum_comps.cursor_count>100)
+		if(hum_comps.cursor_count>50)
 		{
 		        hum_comps.cursor_count=0;
 			if(hum_comps.dis_oper_mark&MD_OPER_DIS_MARK)
@@ -690,22 +687,38 @@ static void query_mode_display(unsigned char opt)
 		hum_comps.dig0_2=num/100%10;
 		hum_comps.dig0_3=num/1000%10;
 		hum_comps.dig0_4=num/10000%10;
-		hum_comps.dot0_pos=4;// 0.0
-		if(mode_comps[hum_comps.current_mode].dis_option==5)//4-20ma current dir
+		
+		
+		
+		
+		
+		if(mode_comps[hum_comps.current_mode].dis_option<3)
+		{
+			DIS_S1_G_CM_3;
+			hum_comps.dot0_pos=4;// 0.0
+		}
+		else if(mode_comps[hum_comps.current_mode].dis_option<5)
+		{
+           #if((MD_DEVICE==MD_CONSICY) &&(MD_CONSICY_TYPE==MD_ALCOHOL||MD_CONSICY_TYPE==MD_BOMEIDU))
+			DIS_S3_PPM; 
+			hum_comps.dot0_pos=2;// 0.0
+		   #else
+		   hum_comps.dot0_pos=4;// 0.0000
+		   DIS_S1_G_CM_3;
+		   #endif
+		}
+		else if(mode_comps[hum_comps.current_mode].dis_option==5)//4-20ma current dir
 		{
 		    hide_zero(1);
 		    hum_comps.dot0_pos=0;// 0.0
-		}
-		display_line0_data(); 
-		if(mode_comps[hum_comps.current_mode].dis_option<5)
-		{
-			DIS_S1_G_CM_3;
+		    HID_S1_S2_S3; 
 		}
 		else
 		{
-			HID_S1_S2_S3; 
+            HID_S1_S2_S3; 
+            hum_comps.dot0_pos=4;// 0.0000
 		}
-		
+		display_line0_data(); 
 		hum_comps.dis_oper_mark&=~MD_OPER_REFRESH_PARAM_MARK;
 	}
 	if(hum_comps.dis_oper_mark&MD_OPER_REFRESH_OPTION_MARK)
@@ -725,7 +738,7 @@ static void modify_mode_display(unsigned char opt)
 	if(hum_comps.dis_oper_mark&MD_OPER_CUR_MARK)
 	{
 		hum_comps.cursor_count++;
-		if(hum_comps.cursor_count>100)
+		if(hum_comps.cursor_count>50)
 		{
 		        hum_comps.cursor_count=0;
 			if(hum_comps.dis_oper_mark&MD_OPER_DIS_MARK)

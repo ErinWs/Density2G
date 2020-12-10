@@ -852,7 +852,7 @@ user_src
       <ReserveWorkingMemoryForRrmDmm-DefaultValue>False</ReserveWorkingMemoryForRrmDmm-DefaultValue>
       <StartAddressOfWorkingMemoryForRrmDmm-DefaultValue />
       <IsLockedByUser>False</IsLockedByUser>
-      <TimeTagModified--0>-8586339387418201616</TimeTagModified--0>
+      <TimeTagModified--0>-8585955035989405738</TimeTagModified--0>
       <DebugInformation-0>True</DebugInformation-0>
       <ErrorListFile-0>False</ErrorListFile-0>
       <LibraryFiles-0 />
@@ -995,9 +995,9 @@ user_src
       <VariableInformationFolder-DefaultValue>%BuildModeName%</VariableInformationFolder-DefaultValue>
       <VariableInformationFileName-DefaultValue>%ProjectName%.vfi</VariableInformationFileName-DefaultValue>
       <IsLockedByUser>False</IsLockedByUser>
-      <TimeTagModified--0>-8586339387418201616</TimeTagModified--0>
+      <TimeTagModified--0>-8585955035989405738</TimeTagModified--0>
       <Margin-0>0</Margin-0>
-      <OutputRomRamUsage-0>False</OutputRomRamUsage-0>
+      <OutputRomRamUsage-0>True</OutputRomRamUsage-0>
       <VariableInformationFile-0>False</VariableInformationFile-0>
       <VariableInformationFolder-0>%BuildModeName%</VariableInformationFolder-0>
       <VariableInformationFileName-0>%ProjectName%.vfi</VariableInformationFileName-0>
@@ -4911,7 +4911,7 @@ user_src
         &lt;pior1_value Name="pior1_value" Value="00" /&gt;
         &lt;cg_security5 Name="cg_security5" Value="00" /&gt;
         &lt;cg_crc_area Name="cg_crc_area" Value="00" /&gt;
-        &lt;rrm Name="rrm" Value="1FE00" /&gt;
+        &lt;ocdstart Name="ocdstart" Value="1FE00" /&gt;
         &lt;cg_security3 Name="cg_security3" Value="00" /&gt;
         &lt;cg_security0 Name="cg_security0" Value="00" /&gt;
         &lt;cg_security1 Name="cg_security1" Value="00" /&gt;
@@ -4922,7 +4922,7 @@ user_src
         &lt;cg_option Name="cg_option" Value="84" /&gt;
         &lt;cg_security8 Name="cg_security8" Value="00" /&gt;
         &lt;df_waittime Name="df_waittime" Value="8" /&gt;
-        &lt;ocdstart Name="ocdstart" Value="1FE00" /&gt;
+        &lt;cg_security4 Name="cg_security4" Value="00" /&gt;
         &lt;cg_pms_value Name="cg_pms_value" Value="00" /&gt;
         &lt;cg_onchip Name="cg_onchip" Value="" /&gt;
         &lt;cg_security2 Name="cg_security2" Value="00" /&gt;
@@ -4930,7 +4930,7 @@ user_src
         &lt;lvi_option Name="lvi_option" Value="7F" /&gt;
         &lt;wdt_option Name="wdt_option" Value="FF" /&gt;
         &lt;cg_security6 Name="cg_security6" Value="00" /&gt;
-        &lt;cg_security4 Name="cg_security4" Value="00" /&gt;
+        &lt;rrm Name="rrm" Value="1FE00" /&gt;
       &lt;/GlobleUserTag&gt;
     &lt;/TAG&gt;
   &lt;/DIR&gt;

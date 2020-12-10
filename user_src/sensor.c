@@ -46,6 +46,43 @@ static const long temp_tab[] =
 
 }; 
 
+static const float Alcohol_density_table[] = 
+{
+
+0.99800 ,0.99528 ,0.99243 ,0.98973 ,0.98718 ,0.98476 ,0.98233 ,0.98009 ,0.97786 ,0.9757,
+0.97350 ,0.97145 ,0.96925 ,0.96699 ,0.96465 ,0.96224 ,0.95972 ,0.95703 ,0.95419 ,0.9512,
+0.94805 ,0.94477 ,0.94135 ,0.93776 ,0.93444 ,0.93017 ,0.92617 ,0.92209 ,0.91789 ,0.9135,
+0.90915 ,0.90463 ,0.90001 ,0.89531 ,0.89650 ,0.88558 ,0.88056 ,0.87542 ,0.87019 ,0.8648,
+0.85928 ,0.85364 ,0.84786 ,0.84188 ,0.83569 ,0.82925 ,0.82246 ,0.81526 ,0.80749 ,0.799 ,0.78934
+
+}; 
+
+static const int Alcohol_consicy_table[] = 
+{
+    0     , 159  ,318    ,478    ,640   ,802   ,964  ,1128  ,1292   ,1456 ,
+    1621  ,1788  ,1955   ,2122   ,2291  ,2461  ,2632  ,2804  ,2978  ,3153 ,
+    3330  ,3509  ,3689   ,3872   ,4056  ,4243  ,4431  ,4623  ,4816  ,5011 ,
+    5209  ,5410  ,5613   ,5819   ,6028  ,6239  ,6454  ,6672  ,6894  ,7119 ,
+    7349  ,7582  ,7820   ,8063   ,8312  ,8567  ,8829  ,9101  ,9381  ,9682 ,10000
+
+};
+
+static const float BoMeiDu_density_table[] = 
+{
+    1.00,	1.01,	1.02,	1.03,	1.04,	1.05,	1.06,	1.07,	1.08,	1.09,	1.1,	1.11,	1.12,	1.13,	1.14,	1.15,	1.16,	1.17,	1.18,	1.19,	1.2,	1.21,	1.22,	1.23,	1.24,	1.25,	1.26,
+    1.27,	1.28,	1.29,	1.3,	1.31,	1.32,	1.33,	1.34,	1.35,	1.36,	1.37,	1.38,	1.39,	1.4,	1.41,	1.42,	1.43,	1.44,	1.45,	1.46,	1.47,	1.48,	1.49,	1.5,	1.51,	1.52,	1.53,
+    1.54,	1.55,	1.56,	1.57,	1.58,	1.59,	1.6,	1.61,	1.62,	1.63,	1.64,	1.65,	1.66,	1.67,	1.68,	1.69,	1.7,	1.71,	1.72,	1.73,	1.74,	1.75,	1.76,	1.77,	1.78,	1.79,	1.8 
+
+}; 
+    
+static const int BoMeiDu_consicy_table[] = //2fixdot 
+{
+   
+0   	,144	,284	,422	,558	,691	,821	,949	,1074	,1197	,1318	,1437	,1554	,1668	,1781	,1891	,2000	,2107	,2212	,2315	,2417	,2516	,2615	,2711	,2806	,2900	,2992,
+3083	,3172	,326	,3346	,3431	,3515	,3598	,3679	,3759	,3838	,3916	,3993	,4068	,4143	,4216	,4289	,436	,4431	,4500	,4568	,4636	,4703	,4768	,4833	,4897	,496	,5023,
+5084	,5145	,5205	,5264	,5323	,538	,5438	,5494	,5549	,5604	,5658	,5712	,5765	,5817	,5869	,592	,5971	,602	,607	,6118	,6167	,6214	,6261	,6308	,6354	,6399	,6444
+}; 
+
 
 static  long calc_adc_average(sensor_comps_t *const this)
 {
@@ -251,7 +288,7 @@ static long calc_signal_period(sensor_comps_t *const this)
     int count=this->timer_ch1_pos;
     float a=1;
     long  cmp=0;
-	if(count<MD_ADC_MAX_POS/2)
+	if(count<MD_TIMER_MAX_POS/2)
 	{
 	        MD_SET_TIMER_RESULT_0X1FFFF;
 	        count=MD_ADC_MAX_POS;
@@ -404,6 +441,145 @@ ret:
 }
 ////////////////////////////////end get density////////////////////////////////////
 ////////////////////////////////end get density////////////////////////////////////
+static long calc_Mud_consicy(sensor_comps_t *const this)
+{
+    long coe;	
+    if(this->current_density<10000)
+    {
+        return 0;
+    }
+  // 
+    coe=34150*(this->current_density/10000. -1);
+    return coe;
+}
+
+static long calc_Alcohol_consicy(sensor_comps_t *const this)
+{
+    float delta_v= this->current_density/10000.;
+	long consicy=0;
+
+    float  LowTValue;
+    float  HighTValue;        
+    int   i;
+    int  Bottom=0;
+    int  Top=sizeof(Alcohol_density_table)/sizeof(Alcohol_density_table[0])-1; //
+    if (delta_v>Alcohol_density_table[Bottom])               
+    {
+       // Top=Bottom+1;
+       // goto insert_calc;//jmp 2 points insert_calc code
+        return consicy=Alcohol_consicy_table[Bottom];
+    }
+    else if (delta_v<Alcohol_density_table[Top])       
+    {
+       // Bottom=Top-1;
+        //goto insert_calc;
+        return consicy=Alcohol_consicy_table[Top];
+    }
+	i=Top/2;
+	while(Top-Bottom>1)
+	{
+        if (delta_v>Alcohol_density_table[i])
+        {
+            Top = i;
+            i = (Top + Bottom) / 2;
+        }
+        else if (delta_v <Alcohol_density_table[i])
+        {
+            Bottom = i;
+            i = (Top + Bottom) / 2;
+        }
+        else
+        {
+            consicy = Alcohol_consicy_table[i];
+            goto  ret;
+        }
+    }
+insert_calc:
+{
+    
+    LowTValue  = Alcohol_density_table[Bottom];
+    HighTValue = Alcohol_density_table[Top];
+    consicy =(
+    ((delta_v-LowTValue)*(Alcohol_consicy_table[Top]-Alcohol_consicy_table[Bottom]))
+    /(HighTValue - LowTValue)
+    )
+    +Alcohol_consicy_table[Bottom];
+}
+ret:
+    if(consicy<0)
+    {
+        consicy=0;
+    }
+    else if(consicy>10000)
+    {
+        consicy=10000;
+    }
+	return consicy;
+}
+
+static long calc_BoMeiDu_consicy(sensor_comps_t *const this)
+{
+    float delta_v= this->current_density/10000.;
+    long consicy=0;
+
+    float  LowTValue;
+    float  HighTValue;        
+    int   i;
+    int  Bottom=0;
+    int  Top=sizeof(BoMeiDu_density_table)/sizeof(BoMeiDu_density_table[0])-1; //
+    if (delta_v<BoMeiDu_density_table[Bottom])               
+    {
+       // Top=Bottom+1;
+       // goto insert_calc;//jmp 2 points insert_calc code
+        return consicy=BoMeiDu_consicy_table[Bottom];
+    }
+    else if (delta_v>BoMeiDu_density_table[Top])       
+    {
+       // Bottom=Top-1;
+        //goto insert_calc;
+        return consicy=BoMeiDu_consicy_table[Top];
+    }
+    i=Top/2;
+    while(Top-Bottom>1)
+    {
+        if (delta_v<BoMeiDu_density_table[i])
+        {
+            Top = i;
+            i = (Top + Bottom) / 2;
+        }
+        else if (delta_v >BoMeiDu_density_table[i])
+        {
+            Bottom = i;
+            i = (Top + Bottom) / 2;
+        }
+        else
+        {
+            consicy = BoMeiDu_consicy_table[i];
+            goto  ret;
+        }
+    }
+insert_calc:
+{
+    
+    LowTValue  = BoMeiDu_density_table[Bottom];
+    HighTValue = BoMeiDu_density_table[Top];
+    consicy =(
+    ((delta_v-LowTValue)*(BoMeiDu_consicy_table[Top]-BoMeiDu_consicy_table[Bottom]))
+    /(HighTValue - LowTValue)
+    )
+    +BoMeiDu_consicy_table[Bottom];
+}
+ret:
+    if(consicy<0)
+    {
+        consicy=0;
+    }
+    else if(consicy>10000)
+    {
+        consicy=10000;
+    }
+    return consicy;
+}
 
 
 static void sensor_comps_output_debug_info(sensor_comps_t const *const this)
@@ -473,7 +649,11 @@ static void read_param(void)
 		sensor_comps.param_tab[1]=9970; //Density calibration point 1
 		sensor_comps.param_tab[2]=11400;//Density calibration point 2
 		sensor_comps.param_tab[3]=0;//3,lower_range,
+		#if(MD_DEVICE==MD_CONSICY)
+		sensor_comps.param_tab[4]=10000;//4,upper_range
+		#else
 		sensor_comps.param_tab[4]=25000;//4,upper_range
+		#endif
 		sensor_comps.param_tab[5]=0;//5,Current dir,
 		sensor_comps.param_tab[6]=10000;//6Temperature Coe,
 		sensor_comps.param_tab[7]=10000;//5,Current Coe,
@@ -666,7 +846,7 @@ static void sensor_comps_task_handle()//Execution interval is 20 ms
 	
 	if(this->do_init==0)
 	{
-		if(this->count==12)//every 12*20ms calc temperature and density
+		if(this->count==MD_TIMER_MAX_POS)//every 12*20ms calc temperature and density
 		{
 			this->count=0;
 			//this->calc_pt1000(this);
@@ -676,7 +856,19 @@ static void sensor_comps_task_handle()//Execution interval is 20 ms
 			hum_comps.dis_oper_mark|=MD_OPER_REFRESH_TEMP_MARK;
 			//this->calc_signal_period(this);
 			this->calc_density(this);
-			calc_4_20ma_output(this->current_density,MD_DENSITY_LOWER_RANGE_LIMIT,MD_DENSITY_UPPER_RANGE_LIMIT);
+			#if(MD_CONSICY_TYPE==MD_ALCOHOL)
+			this->current_consicy=calc_Alcohol_consicy(this);
+			#elif(MD_CONSICY_TYPE==MD_MUD)
+			this->current_consicy=calc_Mud_consicy(this);
+			#elif(MD_CONSICY_TYPE==MD_BOMEIDU)
+			this->current_consicy=calc_BoMeiDu_consicy(this);
+			#endif
+			
+		    #if((MD_DEVICE==MD_CONSICY) && (MD_CONSICY_TYPE==MD_ALCOHOL||MD_CONSICY_TYPE==MD_BOMEIDU) )
+			calc_4_20ma_output(this->current_consicy,MD_DENSITY_LOWER_RANGE_LIMIT,MD_DENSITY_UPPER_RANGE_LIMIT);
+			#else
+            calc_4_20ma_output(this->current_density,MD_DENSITY_LOWER_RANGE_LIMIT,MD_DENSITY_UPPER_RANGE_LIMIT);
+			#endif
 			hum_comps.dis_oper_mark|=MD_OPER_REFRESH_DATA_MARK;
 			hum_comps.dis_oper_mark|=MD_OPER_REFRESH_FREQ_MARK;
 			this->adc_pos=0;
@@ -723,7 +915,8 @@ sensor_comps_t sensor_comps=
 	0,            //unsigned long signal_freq;         //unit: Hz,by call the function calc_signal_period(sensor_comp_t *const this)
 
     0,0,0,0,0,0,0,0,0,0, //Yn-9-----------Yn-1 Yn  this  period sample value for calc dennsity,24Mhz counter valve, by call the function calc_signal_period(sensor_comp_t *const this) with param [timer_result[][],
-    0,            //unsigned long current_density;
+    0,            // long current_density;
+    0, //long current_consicy;
 	
 	////////////////////////////param 0-5,password 0 is accessible ,param 6,password 1  accessible
 	//4 fixed-point decimals,g/cm^3  F_RANGE      T    C      D     cs
@@ -735,7 +928,8 @@ sensor_comps_t sensor_comps=
 	
 	
 	calc_signal_period,//unsigned long (*calc_signal_period)(struct _SENSOR_COMPONENTS *const ); //point to calc_signal_period(sensor_comp_t *const this)
-        calc_density, //unsigned long (*calc_density)(struct _SENSOR_COMPONENTS const *const);//point to calc_density(float signal_freq_ch0,float signal_freq ,float fT)
+    calc_density, //unsigned long (*calc_density)(struct _SENSOR_COMPONENTS const *const);//point to calc_density(float signal_freq_ch0,float signal_freq ,float fT)
+    calc_Alcohol_consicy, //long ( *const calc_consicy)      (struct _SENSOR_COMPONENTS *const);
 	sensor_comps_task_handle,//void  (* const task_handle)(void);//point to sensor_comps_task_handle
 	sensor_comps_output_debug_info,//void (* const output_debug_info)(struct _SENSOR_COMPONENTS const  *this); point to sensor_comps_output_debug_info(sensor_comps_t const *const this)
 	""                             //char debug_info[100];

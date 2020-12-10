@@ -7,10 +7,16 @@
 #define   MD_DEVICE            MD_CONSICY
 
 
+#define   MD_ALCOHOL            0
+#define   MD_MUD                1
+#define   MD_BOMEIDU            2
+#define   MD_CONSICY_TYPE       MD_BOMEIDU
+
+
 #define  MD_ADC_CHANNEL_MAX_NUM         2
-#define  MD_ADC_MAX_POS                 12
+#define  MD_ADC_MAX_POS                 50
 #define  MD_TIMER_CHANNEL_MAX_NUM       2
-#define  MD_TIMER_MAX_POS               12
+#define  MD_TIMER_MAX_POS               50
 
 #define  MD_ADC_EOC_FLAG                0x0001  //adc end of convert flag
 #define  MD_TIMER_CH1_MEASURE_OK_FLAG   0x0002 //use high leve time measure flag
@@ -61,6 +67,7 @@ typedef struct _SENSOR_COMPONENTS
         long  signal_period;//(Yn) this  period sample value for calc dennsity,24Mhz counter valve*10, by call the function calc_signal_period(sensor_comp_t *const this) with param [timer_result[][],
 	
 	long  current_density;
+	long  current_consicy;//fix 2 dot
 	
 	////////////////////////////param 0-5,password 0 is accessible ,param 6,password 1  accessible
 	long param_tab[11];//0-2,Density value for each calibration point(4 fix dot),3,full_range,4,Temperature Coe,5,Current coe,6,Density coe,7,check sum(cs)
@@ -71,6 +78,7 @@ typedef struct _SENSOR_COMPONENTS
 	
 	long ( *const calc_signal_period)(struct _SENSOR_COMPONENTS *const ); //point to calc_signal_period(sensor_comp_t *const this)
     long ( *const calc_density)      (struct _SENSOR_COMPONENTS *const);//point to calc_density(sensor_comp_t *const this)
+    long ( *const calc_consicy)      (struct _SENSOR_COMPONENTS *const);
 	void  ( *const task_handle)(void);//point to sensor_comps_task_handle
 	void  ( *const output_debug_info)(struct _SENSOR_COMPONENTS  const *const);//point to sensor_comps_output_debug_info(sensor_comps_t const *const this)
 	char debug_info[128];
