@@ -10,7 +10,10 @@
 #define   MD_ALCOHOL            0
 #define   MD_MUD                1
 #define   MD_BOMEIDU            2
-#define   MD_CONSICY_TYPE       MD_BOMEIDU
+#define   MD_NIAOSU             3
+#define   MD_LIUSUAN            4
+
+#define   MD_CONSICY_TYPE       MD_LIUSUAN
 
 
 #define  MD_ADC_CHANNEL_MAX_NUM         2

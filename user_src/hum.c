@@ -569,8 +569,8 @@ static void normal_mode_display(unsigned char opt)
 	    				hum_comps.dot0_pos=1;// 0.0  // kg/m^3 0.0
                         DIS_S2_KG_M_3; 
                         
-                      #elif((MD_DEVICE==MD_CONSICY) &&(MD_CONSICY_TYPE==MD_MUD))
-                          hum_comps.dot0_pos=1;// 0.0  // %
+                      #elif((MD_DEVICE==MD_CONSICY) &&(MD_CONSICY_TYPE==MD_MUD||MD_CONSICY_TYPE==MD_NIAOSU||MD_CONSICY_TYPE==MD_LIUSUAN))
+                          hum_comps.dot0_pos=2;// 0.0  // %
                           hide_zero(hum_comps.dot0_pos+1);//reserved 2 digits 
     	    			  DIS_S3_PPM;
                      #elif ((MD_DEVICE==MD_CONSICY) &&(MD_CONSICY_TYPE==MD_ALCOHOL||MD_CONSICY_TYPE==MD_BOMEIDU))
@@ -699,7 +699,7 @@ static void query_mode_display(unsigned char opt)
 		}
 		else if(mode_comps[hum_comps.current_mode].dis_option<5)
 		{
-           #if((MD_DEVICE==MD_CONSICY) &&(MD_CONSICY_TYPE==MD_ALCOHOL||MD_CONSICY_TYPE==MD_BOMEIDU))
+           #if(MD_DEVICE==MD_CONSICY)
 			DIS_S3_PPM; 
 			hum_comps.dot0_pos=2;// 0.0
 		   #else

@@ -163,14 +163,14 @@ static unsigned char write_eeprom(unsigned int addr,  void const * const buf, un
 	
 reStart:
 	SlaveAddr = 0xA0 + (unsigned char)((addr & 0x0700)>>7);
-	for(w_wait=0; w_wait<64; w_wait++){
+	for(w_wait=0; w_wait<4; w_wait++){
 		I2CStart();
 		if(_TRUE == I2CByteTX(SlaveAddr))break;
 		I2CStop();
 		I2CStop();
 		DelayMs(1);
 	}	
-	if(w_wait >= 64) _RtFail;
+	if(w_wait >= 4) _RtFail;
 	if(_FALSE == I2CByteTX((unsigned char)(addr%0x100))) _RtFail; 
 	while(n--)
 	{
@@ -202,7 +202,7 @@ static unsigned char read_eeprom(unsigned int addr, void * const buf, unsigned i
 	I2CVCC = 1;I2CDelay(); 	//power up eeprom
 	
 	SlaveAddr = 0xA0 + (unsigned char)((addr & 0x0700)>>7);	
-	for(w_wait=0; w_wait<64; w_wait++){
+	for(w_wait=0; w_wait<4; w_wait++){
 		I2CStart();
 		if(_TRUE == I2CByteTX(SlaveAddr))break;
 		I2CStop();
@@ -210,7 +210,7 @@ static unsigned char read_eeprom(unsigned int addr, void * const buf, unsigned i
 		DelayMs(1);
 	}
 	
-	if(w_wait >= 64) _RtFail;
+	if(w_wait >= 4) _RtFail;
 	if(_FALSE == I2CByteTX((unsigned char)(addr%0x100))) _RtFail;
 	I2CStart();
 	if(_FALSE == I2CByteTX((SlaveAddr+1))) _RtFail;

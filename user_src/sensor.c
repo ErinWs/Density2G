@@ -425,18 +425,35 @@ insert_calc:
 	
 ret:	
     fDensity=fDensity/10000.* MD_DENSITY_CORRECT_FACTOR;
-	if(fDensity<2000)//4 fix dot ,g/cm^3
-	{
-		this->current_density=fDensity=MD_DENSITY_LOWER_RANGE_LIMIT;
-	}
-	else if(fDensity<MD_DENSITY_UPPER_RANGE_LIMIT)
-	{
-		this->current_density=fDensity;
-	}
-	else
-	{
-             this->current_density=MD_DENSITY_UPPER_RANGE_LIMIT;
-	}
+    
+    #if(MD_DEVICE==MD_CONSICY)
+    	if(fDensity<2000)//4 fix dot ,g/cm^3
+    	{
+    		this->current_density=fDensity=0;
+    	}
+    	
+    	else if(fDensity>30000)
+    	{
+                 this->current_density=fDensity=30000;
+    	}
+    	else 
+    	{
+    		this->current_density=fDensity;
+    	}
+	#else
+    	if(fDensity<2000)//4 fix dot ,g/cm^3
+    	{
+    		this->current_density=fDensity=MD_DENSITY_LOWER_RANGE_LIMIT;
+    	}
+    	else if(fDensity<MD_DENSITY_UPPER_RANGE_LIMIT)
+    	{
+    		this->current_density=fDensity;
+    	}
+    	else
+    	{
+                 this->current_density=MD_DENSITY_UPPER_RANGE_LIMIT;
+    	}
+	#endif
 	return this->current_density;
 }
 ////////////////////////////////end get density////////////////////////////////////
@@ -449,7 +466,32 @@ static long calc_Mud_consicy(sensor_comps_t *const this)
         return 0;
     }
   // 
-    coe=34150*(this->current_density/10000. -1);
+    coe=341500*(this->current_density/10000. -1);
+    if(coe<0)
+    {
+        coe=0;
+    }
+    return coe;
+}
+
+static long calc_NiaoSu_consicy(sensor_comps_t *const this)
+{
+    long coe;	
+    coe=35710*(this->current_density/10000.)-35550;
+    if(coe<0)
+    {
+        coe=0;
+    }
+    return coe;
+}
+static long calc_LiuSuan_consicy(sensor_comps_t *const this)
+{
+    long coe;	
+    coe=14710*(this->current_density/10000.)-14680;
+    if(coe<0)
+    {
+        coe=0;
+    }
     return coe;
 }
 
@@ -862,9 +904,13 @@ static void sensor_comps_task_handle()//Execution interval is 20 ms
 			this->current_consicy=calc_Mud_consicy(this);
 			#elif(MD_CONSICY_TYPE==MD_BOMEIDU)
 			this->current_consicy=calc_BoMeiDu_consicy(this);
+			#elif(MD_CONSICY_TYPE==MD_NIAOSU)
+			this->current_consicy=calc_NiaoSu_consicy(this);
+			#elif(MD_CONSICY_TYPE==MD_LIUSUAN)
+			this->current_consicy=calc_LiuSuan_consicy(this);
 			#endif
 			
-		    #if((MD_DEVICE==MD_CONSICY) && (MD_CONSICY_TYPE==MD_ALCOHOL||MD_CONSICY_TYPE==MD_BOMEIDU) )
+		    #if(MD_DEVICE==MD_CONSICY)
 			calc_4_20ma_output(this->current_consicy,MD_DENSITY_LOWER_RANGE_LIMIT,MD_DENSITY_UPPER_RANGE_LIMIT);
 			#else
             calc_4_20ma_output(this->current_density,MD_DENSITY_LOWER_RANGE_LIMIT,MD_DENSITY_UPPER_RANGE_LIMIT);
