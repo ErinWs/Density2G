@@ -360,6 +360,7 @@ static long calc_signal_period(sensor_comps_t *const this)
    }
 	
 	////////// end Temperature compensation
+	this->signal_period_comp=signal_period;
 	this->signal_freq=20000./signal_period *1000*1000*12;//24Mhz Counter timer ,unit:0.01,
 	this->signal_hi_level_time=sum_high_level*10/(count*20);//24Mhz Counter timer ,unit:0.1us
 	this->signal_lo_level_time=sum_low_level*10/(count*20); //24Mhz Counter timer ,unit:0.1us
@@ -466,7 +467,7 @@ static long calc_Mud_consicy(sensor_comps_t *const this)
         return 0;
     }
   // 
-    coe=341500*(this->current_density/10000. -1);
+    coe=34150*(this->current_density/10000. -1);
     if(coe<0)
     {
         coe=0;
@@ -495,6 +496,37 @@ static long calc_LiuSuan_consicy(sensor_comps_t *const this)
     return coe;
 }
 
+static long calc_YiErChun_consicy(sensor_comps_t *const this)
+{
+    long coe;	
+    coe=65270*(this->current_density/10000.)-65820;
+    if(coe<0)
+    {
+        coe=0;
+    }
+    else if(coe>10000)
+    {
+        coe=10000;
+    }
+    return coe;
+}
+
+static long calc_RongZhi_ZhiLiang(sensor_comps_t *const this)
+{
+    long coe;
+    float temp=this->current_temp/10.;
+    float water_density=(-0.0055*temp*temp+0.0228*temp+999.99)/1000;
+    coe=(this->current_density /10000. -  water_density)*100;
+    if(coe<0)
+    {
+        coe=0;
+    }
+    else if(coe>10000)
+    {
+        coe=10000;
+    }
+    return coe;
+}
 static long calc_Alcohol_consicy(sensor_comps_t *const this)
 {
     float delta_v= this->current_density/10000.;
@@ -908,7 +940,11 @@ static void sensor_comps_task_handle()//Execution interval is 20 ms
 			this->current_consicy=calc_NiaoSu_consicy(this);
 			#elif(MD_CONSICY_TYPE==MD_LIUSUAN)
 			this->current_consicy=calc_LiuSuan_consicy(this);
-			#endif
+			#elif(MD_CONSICY_TYPE==MD_YIERCHUN)
+			this->current_consicy=calc_YiErChun_consicy(this);
+			#elif(MD_CONSICY_TYPE==MD_RONGZHI_ZHILIANG)
+			this->current_consicy=calc_RongZhi_ZhiLiang(this);
+            #endif
 			
 		    #if(MD_DEVICE==MD_CONSICY)
 			calc_4_20ma_output(this->current_consicy,MD_DENSITY_LOWER_RANGE_LIMIT,MD_DENSITY_UPPER_RANGE_LIMIT);
@@ -959,7 +995,7 @@ sensor_comps_t sensor_comps=
 	0,            //unsigned long signal_hi_level_time;//unit: us,by call the function calc_signal_period(sensor_comp_t *const this)
 	0,            //unsigned long signal_lo_level_time;//unit: us,by call the function calc_signal_period(sensor_comp_t *const this)
 	0,            //unsigned long signal_freq;         //unit: Hz,by call the function calc_signal_period(sensor_comp_t *const this)
-
+    0,            //long  signal_period_comp;
     0,0,0,0,0,0,0,0,0,0, //Yn-9-----------Yn-1 Yn  this  period sample value for calc dennsity,24Mhz counter valve, by call the function calc_signal_period(sensor_comp_t *const this) with param [timer_result[][],
     0,            // long current_density;
     0, //long current_consicy;

@@ -135,11 +135,11 @@ void R_TAU0_Create(void)
     P0 &= 0xFDU;
     PM0 &= 0xFDU;
     /* Set TI01 pin */
-    PMC1 &= 0xBFU;
+//    PMC1 &= 0xBFU;
     PM1 |= 0x40U;
     /* Set TI02 pin */
     POM1 &= 0x7FU;
-    PMC1 &= 0x7FU;
+ //   PMC1 &= 0x7FU;
     PM1 |= 0x80U;
 }
 

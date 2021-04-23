@@ -569,11 +569,15 @@ static void normal_mode_display(unsigned char opt)
 	    				hum_comps.dot0_pos=1;// 0.0  // kg/m^3 0.0
                         DIS_S2_KG_M_3; 
                         
-                      #elif((MD_DEVICE==MD_CONSICY) &&(MD_CONSICY_TYPE==MD_MUD||MD_CONSICY_TYPE==MD_NIAOSU||MD_CONSICY_TYPE==MD_LIUSUAN))
-                          hum_comps.dot0_pos=2;// 0.0  // %
+                      #elif((MD_DEVICE==MD_CONSICY) &&(MD_CONSICY_TYPE==MD_MUD||MD_CONSICY_TYPE==MD_NIAOSU||MD_CONSICY_TYPE==MD_LIUSUAN||MD_CONSICY_TYPE==MD_YIERCHUN))
+                         #if(MD_CONSICY_TYPE==MD_MUD)
+                           hum_comps.dot0_pos=1;// 0.0  // %
+                         #else
+                           hum_comps.dot0_pos=2;// 0.0  // %
+                         #endif
                           hide_zero(hum_comps.dot0_pos+1);//reserved 2 digits 
     	    			  DIS_S3_PPM;
-                     #elif ((MD_DEVICE==MD_CONSICY) &&(MD_CONSICY_TYPE==MD_ALCOHOL||MD_CONSICY_TYPE==MD_BOMEIDU))
+                     #elif ((MD_DEVICE==MD_CONSICY) &&(MD_CONSICY_TYPE==MD_ALCOHOL||MD_CONSICY_TYPE==MD_BOMEIDU ||MD_CONSICY_TYPE==MD_RONGZHI_ZHILIANG))
                           hum_comps.dot0_pos=2;// 0.0  // %
                           hide_zero(hum_comps.dot0_pos+1);//reserved 2 digits 
     	    			  HID_S1_S2_S3;
@@ -700,11 +704,15 @@ static void query_mode_display(unsigned char opt)
 		else if(mode_comps[hum_comps.current_mode].dis_option<5)
 		{
            #if(MD_DEVICE==MD_CONSICY)
-			DIS_S3_PPM; 
-			hum_comps.dot0_pos=2;// 0.0
+             #if(MD_CONSICY_TYPE==MD_MUD)
+               hum_comps.dot0_pos=1;// 0.0  // %
+             #else
+               hum_comps.dot0_pos=2;// 0.0  // %
+             #endif
+              DIS_S3_PPM;
 		   #else
-		   hum_comps.dot0_pos=4;// 0.0000
-		   DIS_S1_G_CM_3;
+		      hum_comps.dot0_pos=4;// 0.0000
+		      DIS_S1_G_CM_3;
 		   #endif
 		}
 		else if(mode_comps[hum_comps.current_mode].dis_option==5)//4-20ma current dir

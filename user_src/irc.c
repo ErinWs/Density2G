@@ -182,7 +182,20 @@ static unsigned char Pro_irc(unsigned char Cmd,unsigned char *buf)
 					ircMisc.send_buf[i++]=crc;
 					ircMisc.send_buf[i++]=crc>>8;
 					break;
-			
+
+			 case 0x0e:  
+		  
+					ircMisc.send_buf[i++]=MD_DEVICE_ADDR;
+					ircMisc.send_buf[i++]=Cmd;
+					ircMisc.send_buf[i++]=4;//length
+					ircMisc.send_buf[i++]=sensor_comps.signal_period_comp>>24;
+					ircMisc.send_buf[i++]=sensor_comps.signal_period_comp>>16;
+					ircMisc.send_buf[i++]=sensor_comps.signal_period_comp>>8;
+					ircMisc.send_buf[i++]=sensor_comps.signal_period_comp;
+					crc=generateCRC(ircMisc.send_buf, i);
+					ircMisc.send_buf[i++]=crc;
+					ircMisc.send_buf[i++]=crc>>8;
+					break;		
 			default:       
 					return 1;
 			

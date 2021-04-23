@@ -4,7 +4,7 @@
 
 #define   MD_DENSITY           0
 #define   MD_CONSICY           1
-#define   MD_DEVICE            MD_CONSICY
+#define   MD_DEVICE           MD_CONSICY
 
 
 #define   MD_ALCOHOL            0
@@ -12,8 +12,11 @@
 #define   MD_BOMEIDU            2
 #define   MD_NIAOSU             3
 #define   MD_LIUSUAN            4
+#define   MD_YIERCHUN           5
+#define   MD_RONGZHI_ZHILIANG   6
 
-#define   MD_CONSICY_TYPE       MD_LIUSUAN
+
+#define   MD_CONSICY_TYPE      MD_MUD
 
 
 #define  MD_ADC_CHANNEL_MAX_NUM         2
@@ -58,6 +61,7 @@ typedef struct _SENSOR_COMPONENTS
 	long  signal_hi_level_time;//unit: 0.1us,by call the function calc_signal_period(sensor_comp_t *const this)
 	long  signal_lo_level_time;//unit: 0.1us,by call the function calc_signal_period(sensor_comp_t *const this)
 	long  signal_freq;         //unit: 0.01 Hz,by call the function calc_signal_period(sensor_comp_t *const this)
+	long  signal_period_comp;
 	long  signal_period_n_9;//Last  period sample value Yn-9
 	long  signal_period_n_8;//Last  period sample value Yn-8
 	long  signal_period_n_7;//Last  period sample value Yn-7
